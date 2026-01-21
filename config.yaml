@@ -1,0 +1,23 @@
+# KcBERT 욕설/폭언 감지 시스템 설정
+
+model:
+  name: "beomi/kcbert-base"  # Hugging Face 모델명
+  cache_dir: "./models/kcbert"  # 모델 캐시 디렉토리
+  max_length: 512  # 최대 토큰 길이
+  
+detection:
+  threshold: 0.5  # 욕설 감지 임계값 (0.0 ~ 1.0)
+  batch_size: 8   # 배치 처리 크기
+  
+preprocessing:
+  remove_special_chars: true  # 특수문자 제거
+  normalize_whitespace: true  # 공백 정규화
+  
+output:
+  save_results: true  # 결과 자동 저장
+  results_dir: "./data/results"  # 결과 저장 디렉토리
+  format: "json"  # 출력 형식 (json, text)
+  
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  show_processing_time: true  # 처리 시간 표시

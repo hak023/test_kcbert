@@ -1,0 +1,21 @@
+# KcBERT 욕설/폭언 감지 시스템 의존성
+
+# Core ML Libraries
+torch>=2.0.0
+transformers>=4.30.0
+tokenizers>=0.13.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Configuration
+pyyaml>=6.0
+
+# Utilities
+tqdm>=4.65.0
+python-dateutil>=2.8.2
+
+# Optional: GPU acceleration (CUDA)
+# Install manually if needed:
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118

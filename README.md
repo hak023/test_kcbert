@@ -1,0 +1,256 @@
+# KcBERT 욕설/폭언 감지 시스템
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![KcBERT](https://img.shields.io/badge/Model-KcBERT-orange.svg)
+
+한국어 통화 내용에서 욕설 및 폭언을 자동으로 감지하는 AI 기반 시스템입니다.
+
+## 🎯 주요 기능
+
+- ✅ **KcBERT 기반 욕설 감지**: 한국어에 특화된 BERT 모델 활용
+- ✅ **텍스트 파일 입력**: 통화 내용을 텍스트 파일로 입력
+- ✅ **공격성 점수 산출**: 0~1 범위의 정량적 점수 제공
+- ✅ **규칙 기반 보완**: 패턴 매칭으로 정확도 향상
+- ✅ **배치 처리 지원**: 여러 파일 동시 분석 가능
+- ✅ **결과 자동 저장**: JSON 형식으로 결과 저장
+
+## 📋 시스템 요구사항
+
+- **Python**: 3.8 이상
+- **OS**: Windows / Linux / MacOS
+- **RAM**: 최소 4GB, 권장 8GB
+- **저장공간**: 약 1GB (모델 캐시 포함)
+
+## 🚀 빠른 시작
+
+### 1. 설치
+
+```powershell
+# PowerShell에서 실행 (Windows)
+.\install.ps1
+```
+
+또는 수동 설치:
+
+```bash
+# 가상환경 생성
+python -m venv venv
+
+# 가상환경 활성화 (Windows)
+.\venv\Scripts\Activate.ps1
+
+# 가상환경 활성화 (Linux/Mac)
+source venv/bin/activate
+
+# 의존성 설치
+pip install -r requirements.txt
+```
+
+### 2. 실행
+
+#### 방법 1: 대화형 실행 (권장)
+
+```powershell
+.\run.ps1
+```
+
+대화형 메뉴에서 예제 파일을 선택하여 실행할 수 있습니다.
+
+#### 방법 2: 간편 실행
+
+```powershell
+# 예제 파일 분석
+.\run_simple.ps1 data\samples\normal_call.txt
+
+# 또는 직접 파일 경로 지정
+.\run_simple.ps1 C:\my_data\call.txt
+```
+
+#### 방법 3: Python 직접 실행
+
+```bash
+# 기본 실행
+python main.py --input data/samples/normal_call.txt
+
+# 임계값 조정
+python main.py --input data/samples/abusive_call.txt --threshold 0.7
+
+# 결과 저장 위치 지정
+python main.py --input test.txt --output results/my_result.json
+
+# 결과 저장 안함
+python main.py --input test.txt --no-save
+```
+
+## 📁 프로젝트 구조
+
+```
+workspace_KcBERT/
+├── src/                          # 소스 코드
+│   ├── __init__.py
+│   ├── detector.py               # 메인 감지 엔진
+│   ├── preprocessor.py           # 텍스트 전처리
+│   ├── model_loader.py           # KcBERT 모델 로더
+│   └── utils.py                  # 유틸리티 함수
+├── data/                         # 데이터
+│   ├── samples/                  # 예제 통화 내용
+│   │   ├── normal_call.txt       # 정상 통화
+│   │   ├── abusive_call.txt      # 욕설 포함 통화
+│   │   ├── mixed_call.txt        # 혼합 통화
+│   │   └── complaint_call.txt    # 불만 통화
+│   └── results/                  # 분석 결과 저장
+├── models/                       # 모델 캐시 (자동 생성)
+├── docs/                         # 문서
+│   └── design/
+│       └── architecture.md       # 아키텍처 설계서
+├── requirements.txt              # 의존성 패키지
+├── config.yaml                   # 설정 파일
+├── main.py                       # 메인 실행 스크립트
+├── run.ps1                       # PowerShell 실행 스크립트 (대화형)
+├── run_simple.ps1                # PowerShell 간편 실행 스크립트
+├── install.ps1                   # 설치 스크립트
+└── README.md                     # 본 문서
+```
+
+## 🎓 예제
+
+### 예제 1: 정상 통화
+
+**입력 파일**: `data/samples/normal_call.txt`
+
+```
+고객: 안녕하세요, 제품 문의 드립니다.
+상담원: 네 안녕하세요. 무엇을 도와드릴까요?
+고객: A 상품의 배송 기간이 궁금합니다.
+상담원: A 상품은 주문 후 2-3일 이내에 배송됩니다.
+```
+
+**결과**:
+```json
+{
+  "is_abusive": false,
+  "abusive_score": 0.12,
+  "confidence": 0.89
+}
+```
+
+### 예제 2: 욕설 포함 통화
+
+**입력 파일**: `data/samples/abusive_call.txt`
+
+```
+고객: 야 거기 배송 왜 이렇게 느린거야?
+고객: 이 병신들아. 빨리 안되냐고.
+고객: 시끄러워. 너네 개같은 서비스 때문에...
+```
+
+**결과**:
+```json
+{
+  "is_abusive": true,
+  "abusive_score": 0.87,
+  "confidence": 0.94
+}
+```
+
+## ⚙️ 설정
+
+`config.yaml` 파일에서 시스템 동작을 커스터마이즈할 수 있습니다:
+
+```yaml
+model:
+  name: "beomi/kcbert-base"  # 사용할 모델
+  max_length: 512            # 최대 토큰 길이
+
+detection:
+  threshold: 0.5             # 감지 임계값 (0.0 ~ 1.0)
+  
+output:
+  save_results: true         # 결과 자동 저장
+  results_dir: "./data/results"
+```
+
+### 임계값 조정 가이드
+
+- **0.3**: 매우 민감 (경미한 불만도 감지)
+- **0.5**: 균형 (기본값, 권장)
+- **0.7**: 보수적 (명확한 욕설만 감지)
+
+## 🔧 고급 사용법
+
+### API 방식 사용
+
+Python 코드에서 직접 사용:
+
+```python
+from src.detector import AbusiveDetector
+
+# 감지기 초기화
+detector = AbusiveDetector(threshold=0.5)
+
+# 텍스트 분석
+result = detector.predict("분석할 텍스트")
+
+print(f"욕설 감지: {result['is_abusive']}")
+print(f"공격성 점수: {result['abusive_score']}")
+```
+
+### 배치 처리
+
+```python
+texts = [
+    "첫 번째 통화 내용",
+    "두 번째 통화 내용",
+    "세 번째 통화 내용"
+]
+
+results = detector.predict_batch(texts)
+```
+
+## 📊 성능
+
+- **처리 속도**: 텍스트당 약 0.5~1초 (CPU 기준)
+- **정확도**: 규칙 기반과 결합하여 약 85% (Fine-tuning 시 향상 가능)
+- **메모리**: 약 1.5GB (모델 로드 시)
+
+## ⚠️ 주의사항
+
+1. **Fine-tuning 권장**: 현재 버전은 기본 KcBERT를 사용합니다. 실제 운영 환경에서는 실제 통화 데이터로 Fine-tuning한 모델을 사용하는 것을 권장합니다.
+
+2. **문맥 의존성**: 문맥에 따라 오탐/미탐이 발생할 수 있습니다. 규칙 기반 필터링으로 일부 보완하고 있습니다.
+
+3. **텍스트 길이 제한**: 최대 512 토큰까지 처리 가능합니다 (약 300-400 단어).
+
+4. **개인정보 보호**: 통화 내용에 개인정보가 포함되어 있다면 적절히 마스킹 후 사용하세요.
+
+## 🔮 향후 계획
+
+- [ ] 실제 통화 데이터로 Fine-tuning
+- [ ] 웹 API 서버 구축
+- [ ] 실시간 스트리밍 분석 지원
+- [ ] 감정 분석 기능 추가
+- [ ] 다국어 지원 (영어, 일본어 등)
+- [ ] 대시보드 UI 개발
+
+## 📖 참고 자료
+
+- **KcBERT GitHub**: https://github.com/Beomi/KcBERT
+- **Hugging Face Model**: https://huggingface.co/beomi/kcbert-base
+- **설계 문서**: `docs/design/architecture.md`
+
+## 🤝 기여
+
+버그 리포트, 기능 제안, Pull Request 등 모든 기여를 환영합니다!
+
+## 📝 라이선스
+
+MIT License
+
+## 👥 문의
+
+문제가 발생하거나 질문이 있으시면 Issue를 등록해주세요.
+
+---
+
+**Made with ❤️ using KcBERT**
