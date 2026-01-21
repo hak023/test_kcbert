@@ -70,22 +70,31 @@ class ModelLoader:
             
             # 참고: 실제 운영 환경에서는 fine-tuning된 모델 사용 필요
             try:
-                self.model = AutoModelForSequenceClassification.from_pretrained(
-                    self.model_name,
-                    cache_dir=self.cache_dir,
-                    num_labels=2  # 이진 분류: 정상/욕설
-                )
-            except:
-                # Fine-tuning된 모델이 없는 경우 기본 모델 사용
-                from transformers import BertForSequenceClassification
-                print("   ⚠️  분류 모델 없음 - 기본 BERT 모델 사용")
-                print("   💡 실제 사용을 위해서는 욕설 데이터로 fine-tuning 필요")
+                from transformers import BertForSequenceClassification, BertConfig
                 
+                # KcBERT의 설정을 로드
+                config = BertConfig.from_pretrained(
+                    self.model_name,
+                    cache_dir=self.cache_dir
+                )
+                
+                # 분류 레이어 추가
+                config.num_labels = 2
+                
+                # 모델 로드 (ignore_mismatched_sizes로 크기 불일치 무시)
                 self.model = BertForSequenceClassification.from_pretrained(
                     self.model_name,
+                    config=config,
                     cache_dir=self.cache_dir,
-                    num_labels=2
+                    ignore_mismatched_sizes=True  # 크기 불일치 무시
                 )
+                
+                print("   ⚠️  기본 KcBERT 사용 (fine-tuning 안됨)")
+                print("   💡 실제 사용을 위해서는 욕설 데이터로 fine-tuning 필요")
+                
+            except Exception as e:
+                print(f"   ❌ 모델 로드 실패: {e}")
+                raise
             
             self.model.to(self.device)
             self.model.eval()

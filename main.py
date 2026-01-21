@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 KcBERT 욕설/폭언 감지 시스템 - 메인 실행 스크립트
 """
@@ -5,6 +6,13 @@ KcBERT 욕설/폭언 감지 시스템 - 메인 실행 스크립트
 import os
 import sys
 import argparse
+
+# UTF-8 출력 설정 (Windows 호환)
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 from src.detector import AbusiveDetector
 from src.utils import load_config, save_result, format_result_text, create_output_filename
 

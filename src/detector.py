@@ -16,13 +16,13 @@ class AbusiveDetector:
                  model_name: str = "beomi/kcbert-base",
                  cache_dir: str = "./models/kcbert",
                  threshold: float = 0.5,
-                 max_length: int = 512):
+                 max_length: int = 300):  # KcBERT 최대 길이는 300
         """
         Args:
             model_name: 모델명
             cache_dir: 캐시 디렉토리
             threshold: 감지 임계값 (0.0 ~ 1.0)
-            max_length: 최대 토큰 길이
+            max_length: 최대 토큰 길이 (KcBERT는 300이 최대)
         """
         self.threshold = threshold
         self.max_length = max_length
