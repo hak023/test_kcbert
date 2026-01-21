@@ -8,12 +8,36 @@ import os
 import sys
 import time
 import glob
+import warnings
+
+# 경고 메시지 숨기기
+warnings.filterwarnings('ignore')
 
 # UTF-8 출력 설정 (Windows 호환)
 if sys.platform == 'win32':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Transformers 로깅 레벨 조정
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow 경고 숨기기
+os.environ['TRANSFORMERS_VERBOSITY'] = 'error'  # Transformers 경고 숨기기
+import logging
+logging.getLogger('transformers').setLevel(logging.ERROR)
+logging.getLogger('transformers.modeling_utils').setLevel(logging.ERROR)
+
+# stderr를 임시로 리다이렉트하여 sharding 메시지 숨기기
+import contextlib
+
+class SuppressStderr:
+    def __enter__(self):
+        self._stderr = sys.stderr
+        sys.stderr = open(os.devnull, 'w')
+        return self
+    
+    def __exit__(self, *args):
+        sys.stderr.close()
+        sys.stderr = self._stderr
 
 from src.detector import AbusiveDetector
 from src.utils import load_config, save_result, create_output_filename
@@ -114,12 +138,16 @@ def main():
     print()
     
     init_start = time.time()
-    detector = AbusiveDetector(
-        model_name=config['model']['name'],
-        cache_dir=config['model']['cache_dir'],
-        threshold=config['detection']['threshold'],
-        max_length=config['model']['max_length']
-    )
+    
+    # 모델 로딩 시 경고 메시지 완전히 숨기기
+    with SuppressStderr():
+        detector = AbusiveDetector(
+            model_name=config['model']['name'],
+            cache_dir=config['model']['cache_dir'],
+            threshold=config['detection']['threshold'],
+            max_length=config['model']['max_length']
+        )
+    
     init_time = time.time() - init_start
     
     print(f"✅ 모델 로딩 완료! ({init_time:.2f}초)")

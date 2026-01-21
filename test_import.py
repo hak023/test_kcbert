@@ -6,6 +6,12 @@ PyTorch와 Transformers가 정상적으로 로드되는지 확인
 
 import sys
 import time
+import warnings
+import os
+
+# 경고 메시지 숨기기
+warnings.filterwarnings('ignore')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # UTF-8 출력 설정
 if sys.platform == 'win32':

@@ -6,12 +6,23 @@ KcBERT 욕설/폭언 감지 시스템 - 메인 실행 스크립트
 import os
 import sys
 import argparse
+import warnings
+
+# 경고 메시지 숨기기
+warnings.filterwarnings('ignore')
 
 # UTF-8 출력 설정 (Windows 호환)
 if sys.platform == 'win32':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Transformers 로깅 레벨 조정
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # TensorFlow 경고 숨기기
+os.environ['TRANSFORMERS_VERBOSITY'] = 'error'  # Transformers 경고 숨기기
+import logging
+logging.getLogger('transformers').setLevel(logging.ERROR)
+logging.getLogger('transformers.modeling_utils').setLevel(logging.ERROR)
 
 from src.detector import AbusiveDetector
 from src.utils import load_config, save_result, format_result_text, create_output_filename
