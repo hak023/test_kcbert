@@ -1,0 +1,10 @@
+# sLLM 기반 욕설/폭언 감지 시스템
+
+# llama-cpp-python (GGUF 모델 사용)
+llama-cpp-python>=0.2.0
+
+# 선택: GPU 가속 (CUDA)
+# llama-cpp-python[cuda]>=0.2.0
+
+# 선택: Metal (Mac M1/M2)
+# llama-cpp-python[metal]>=0.2.0

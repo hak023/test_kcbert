@@ -9,11 +9,13 @@
 ## 🎯 주요 기능
 
 - ✅ **KcBERT 기반 욕설 감지**: 한국어에 특화된 BERT 모델 활용
+- ✅ **sLLM 기반 감지**: 온디바이스 4B 모델로 문맥 이해 강화 ⭐ NEW
 - ✅ **텍스트 파일 입력**: 통화 내용을 텍스트 파일로 입력
 - ✅ **공격성 점수 산출**: 0~1 범위의 정량적 점수 제공
 - ✅ **규칙 기반 보완**: 패턴 매칭으로 정확도 향상
 - ✅ **배치 처리 지원**: 여러 파일 동시 분석 가능
 - ✅ **결과 자동 저장**: JSON 형식으로 결과 저장
+- ✅ **판단 근거 제공**: sLLM이 왜 그렇게 판단했는지 이유 설명
 
 ## 📋 시스템 요구사항
 
@@ -271,6 +273,9 @@ results = detector.predict_batch(texts)
 - **KcBERT GitHub**: https://github.com/Beomi/KcBERT
 - **Hugging Face Model**: https://huggingface.co/beomi/kcbert-base
 - **설계 문서**: `docs/design/architecture.md`
+- **sLLM 가이드**: `docs/guides/sllm_detector.md` ⭐ NEW
+- **성능 최적화**: `docs/guides/performance_optimization.md`
+- **정확도 개선**: `docs/guides/accuracy_improvement.md`
 
 ## 🤝 기여
 
@@ -286,4 +291,4 @@ MIT License
 
 ---
 
-**Made with ❤️ using KcBERT**
+**Made with ❤️ using KcBERT + sLLM**
