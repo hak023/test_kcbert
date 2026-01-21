@@ -71,70 +71,105 @@ foreach ($dir in $directories) {
 Write-Host "✓ 디렉토리 구조 확인 완료" -ForegroundColor Green
 Write-Host ""
 
-# 6. 예제 파일 선택 및 실행
-Write-Host "[6/6] 분석할 통화 내용 선택" -ForegroundColor Yellow
+# 6. 실행 모드 선택
+Write-Host "[6/6] 실행 모드 선택" -ForegroundColor Yellow
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "예제 파일 목록:" -ForegroundColor White
-Write-Host "  1. normal_call.txt    - 정상 통화 (욕설 없음)" -ForegroundColor Green
-Write-Host "  2. abusive_call.txt   - 욕설 포함 통화 (욕설 다수)" -ForegroundColor Red
-Write-Host "  3. mixed_call.txt     - 혼합 통화 (불만 표현)" -ForegroundColor Yellow
-Write-Host "  4. complaint_call.txt - 불만 통화 (경미한 불만)" -ForegroundColor Yellow
-Write-Host "  5. 직접 파일 경로 입력" -ForegroundColor Cyan
+Write-Host "실행 모드를 선택하세요:" -ForegroundColor White
+Write-Host "  1. 배치 처리 (모든 샘플 파일 자동 처리) ⭐ 권장" -ForegroundColor Cyan
+Write-Host "  2. 개별 파일 선택" -ForegroundColor White
 Write-Host ""
 
-$choice = Read-Host "선택 (1-5)"
+$mode = Read-Host "선택 (1-2)"
 
-switch ($choice) {
-    "1" { $inputFile = "data/samples/normal_call.txt" }
-    "2" { $inputFile = "data/samples/abusive_call.txt" }
-    "3" { $inputFile = "data/samples/mixed_call.txt" }
-    "4" { $inputFile = "data/samples/complaint_call.txt" }
-    "5" { 
-        $inputFile = Read-Host "파일 경로를 입력하세요"
-        if (-Not (Test-Path $inputFile)) {
-            Write-Host "❌ 파일을 찾을 수 없습니다: $inputFile" -ForegroundColor Red
+if ($mode -eq "1") {
+    # 배치 처리 모드
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "🚀 배치 처리 모드 시작" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    python batch_process.py
+    
+    $exitCode = $LASTEXITCODE
+    
+    Write-Host ""
+    if ($exitCode -eq 0) {
+        Write-Host "✅ 배치 처리 완료!" -ForegroundColor Green
+    } else {
+        Write-Host "❌ 처리 중 오류 발생" -ForegroundColor Red
+    }
+    
+} elseif ($mode -eq "2") {
+    # 개별 파일 선택 모드
+    Write-Host ""
+    Write-Host "예제 파일 목록:" -ForegroundColor White
+    Write-Host "  1. normal_call.txt    - 정상 통화 (욕설 없음)" -ForegroundColor Green
+    Write-Host "  2. abusive_call.txt   - 욕설 포함 통화 (욕설 다수)" -ForegroundColor Red
+    Write-Host "  3. mixed_call.txt     - 혼합 통화 (불만 표현)" -ForegroundColor Yellow
+    Write-Host "  4. complaint_call.txt - 불만 통화 (경미한 불만)" -ForegroundColor Yellow
+    Write-Host "  5. 직접 파일 경로 입력" -ForegroundColor Cyan
+    Write-Host ""
+
+    $choice = Read-Host "선택 (1-5)"
+
+    switch ($choice) {
+        "1" { $inputFile = "data/samples/normal_call.txt" }
+        "2" { $inputFile = "data/samples/abusive_call.txt" }
+        "3" { $inputFile = "data/samples/mixed_call.txt" }
+        "4" { $inputFile = "data/samples/complaint_call.txt" }
+        "5" { 
+            $inputFile = Read-Host "파일 경로를 입력하세요"
+            if (-Not (Test-Path $inputFile)) {
+                Write-Host "❌ 파일을 찾을 수 없습니다: $inputFile" -ForegroundColor Red
+                exit 1
+            }
+        }
+        default {
+            Write-Host "❌ 잘못된 선택입니다" -ForegroundColor Red
             exit 1
         }
     }
-    default {
-        Write-Host "❌ 잘못된 선택입니다" -ForegroundColor Red
-        exit 1
+
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "🔍 분석 시작: $inputFile" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    # 메인 스크립트 실행
+    python main.py --input $inputFile
+
+    # 실행 결과 저장
+    $exitCode = $LASTEXITCODE
+
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+
+    if ($exitCode -eq 0) {
+        Write-Host "✅ 분석 완료: 정상 통화" -ForegroundColor Green
+    } elseif ($exitCode -eq 1) {
+        Write-Host "⚠️  분석 완료: 욕설/폭언 감지됨" -ForegroundColor Red
+    } else {
+        Write-Host "❌ 오류 발생" -ForegroundColor Red
     }
-}
 
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "🔍 분석 시작: $inputFile" -ForegroundColor Cyan
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
 
-# 메인 스크립트 실행
-python main.py --input $inputFile
-
-# 실행 결과 저장
-$exitCode = $LASTEXITCODE
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor Cyan
-
-if ($exitCode -eq 0) {
-    Write-Host "✅ 분석 완료: 정상 통화" -ForegroundColor Green
-} elseif ($exitCode -eq 1) {
-    Write-Host "⚠️  분석 완료: 욕설/폭언 감지됨" -ForegroundColor Red
+    # 결과 파일 위치 안내
+    Write-Host "📁 결과 파일은 data/results/ 디렉토리에 저장되었습니다." -ForegroundColor Yellow
+    Write-Host ""
+    
 } else {
-    Write-Host "❌ 오류 발생" -ForegroundColor Red
+    Write-Host "❌ 잘못된 선택입니다" -ForegroundColor Red
+    exit 1
 }
-
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host ""
-
-# 결과 파일 위치 안내
-Write-Host "📁 결과 파일은 data/results/ 디렉토리에 저장되었습니다." -ForegroundColor Yellow
-Write-Host ""
 
 # 추가 실행 여부 확인
-$continue = Read-Host "다른 파일을 분석하시겠습니까? (Y/N)"
+Write-Host ""
+$continue = Read-Host "다시 실행하시겠습니까? (Y/N)"
 if ($continue -eq "Y" -or $continue -eq "y") {
     Write-Host ""
     & $MyInvocation.MyCommand.Path
