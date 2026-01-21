@@ -26,20 +26,8 @@ import logging
 logging.getLogger('transformers').setLevel(logging.ERROR)
 logging.getLogger('transformers.modeling_utils').setLevel(logging.ERROR)
 
-# stderr를 임시로 리다이렉트하여 sharding 메시지 숨기기
-import contextlib
-
-class SuppressStderr:
-    def __enter__(self):
-        self._stderr = sys.stderr
-        sys.stderr = open(os.devnull, 'w')
-        return self
-    
-    def __exit__(self, *args):
-        sys.stderr.close()
-        sys.stderr = self._stderr
-
-from src.detector import AbusiveDetector
+# ⚡ Lazy import: 필요한 시점에만 로드
+# from src.detector import AbusiveDetector  # 주석 처리
 from src.utils import load_config, save_result, create_output_filename
 
 
@@ -132,14 +120,29 @@ def main():
     print("─" * 70)
     print()
     
+    # ⚡ Lazy import: 실제 필요한 시점에 로드
+    print("📥 모델 모듈 로딩 중... (최초 1회, 약 40초 소요)")
+    from src.detector import AbusiveDetector
+    print("✅ 모듈 로딩 완료!")
+    print()
+    
     # 감지 엔진 초기화 (한 번만)
-    print("🤖 KcBERT 모델 로딩 중...")
-    print("   (처음 실행 시 약 40~50초 소요됩니다)")
+    print("🤖 KcBERT 모델 초기화 중...")
     print()
     
     init_start = time.time()
     
-    # 모델 로딩 시 경고 메시지 완전히 숨기기
+    # stderr 숨기기 클래스
+    class SuppressStderr:
+        def __enter__(self):
+            self._stderr = sys.stderr
+            sys.stderr = open(os.devnull, 'w')
+            return self
+        def __exit__(self, *args):
+            sys.stderr.close()
+            sys.stderr = self._stderr
+    
+    # 모델 초기화 시 경고 메시지 숨기기
     with SuppressStderr():
         detector = AbusiveDetector(
             model_name=config['model']['name'],

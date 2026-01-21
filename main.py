@@ -24,7 +24,8 @@ import logging
 logging.getLogger('transformers').setLevel(logging.ERROR)
 logging.getLogger('transformers.modeling_utils').setLevel(logging.ERROR)
 
-from src.detector import AbusiveDetector
+# ⚡ Lazy import: 필요한 시점에만 로드 (프로그램 시작 속도 2분 → 즉시)
+# from src.detector import AbusiveDetector  # 주석 처리
 from src.utils import load_config, save_result, format_result_text, create_output_filename
 
 
@@ -102,6 +103,10 @@ def main():
     print(f"📄 입력 파일: {args.input}")
     print(f"🎚️  감지 임계값: {threshold}")
     print(f"🤖 모델: {config['model']['name']}")
+    
+    # ⚡ Lazy import: 실제 필요한 시점에 로드
+    print("\n📥 모델 모듈 로딩 중... (최초 1회, 약 40초 소요)")
+    from src.detector import AbusiveDetector
     
     # 감지 엔진 초기화
     detector = AbusiveDetector(

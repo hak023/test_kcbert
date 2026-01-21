@@ -17,6 +17,7 @@ if sys.platform == 'win32':
 import logging
 logging.getLogger('transformers').setLevel(logging.ERROR)
 
+# ⚡ Lazy import는 사용하지 않음 (비교를 위해 둘 다 필요)
 from src.detector import AbusiveDetector
 from src.detector_improved import ImprovedAbusiveDetector
 
