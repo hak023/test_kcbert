@@ -9,7 +9,9 @@
 ## 🎯 주요 기능
 
 - ✅ **KcBERT 기반 욕설 감지**: 한국어에 특화된 BERT 모델 활용
-- ✅ **sLLM 기반 감지**: 온디바이스 4B 모델로 문맥 이해 강화 ⭐ NEW
+- ✅ **다중 카테고리 감지**: 욕설/폭언 + 성희롱 동시 판단 ⭐ NEW
+- ✅ **sLLM 기반 감지**: 온디바이스 4B 모델로 문맥 이해 강화
+- ✅ **Fine-tuning 비교**: 모델 학습 전후 성능 비교 ⭐ NEW
 - ✅ **텍스트 파일 입력**: 통화 내용을 텍스트 파일로 입력
 - ✅ **공격성 점수 산출**: 0~1 범위의 정량적 점수 제공
 - ✅ **규칙 기반 보완**: 패턴 매칭으로 정확도 향상
@@ -63,12 +65,17 @@ pip install -r requirements.txt
 실행 모드를 선택하세요:
   1. 배치 처리 (모든 샘플 파일 자동 처리) ⭐ 권장
   2. 개별 파일 선택
+  3. 다중 카테고리 테스트 (욕설 + 성희롱)
+  4. Fine-tuning 전후 비교 테스트
+  5. 종료
 
-선택 (1-2): 1
+선택 (1-5): 1
 ```
 
 - **배치 처리 모드**: 모든 샘플을 한 번에 처리하고 요약 제공
 - **개별 파일 모드**: 원하는 파일 하나만 분석
+- **다중 카테고리 테스트**: 욕설과 성희롱을 동시에 감지하는 테스트
+- **Fine-tuning 비교**: 모델 학습 전후 성능 비교
 
 **배치 처리 결과 예시**:
 ```
@@ -215,16 +222,26 @@ output:
 Python 코드에서 직접 사용:
 
 ```python
+# 기본 욕설 감지
 from src.detector import AbusiveDetector
 
-# 감지기 초기화
 detector = AbusiveDetector(threshold=0.5)
-
-# 텍스트 분석
 result = detector.predict("분석할 텍스트")
 
 print(f"욕설 감지: {result['is_abusive']}")
 print(f"공격성 점수: {result['abusive_score']}")
+```
+
+```python
+# 다중 카테고리 감지 (욕설 + 성희롱) ⭐ NEW
+from src.detector_multi import MultiCategoryDetector
+
+detector = MultiCategoryDetector()
+result = detector.predict("분석할 텍스트")
+
+print(f"욕설: {result['is_abusive']} ({result['abusive_score']:.2f})")
+print(f"성희롱: {result['is_sexual_harassment']} ({result['harassment_score']:.2f})")
+print(f"카테고리: {result['categories']}")
 ```
 
 ### 배치 처리
@@ -273,7 +290,11 @@ results = detector.predict_batch(texts)
 - **KcBERT GitHub**: https://github.com/Beomi/KcBERT
 - **Hugging Face Model**: https://huggingface.co/beomi/kcbert-base
 - **설계 문서**: `docs/design/architecture.md`
-- **sLLM 가이드**: `docs/guides/sllm_detector.md` ⭐ NEW
+- **사용 가이드**: `docs/guides/usage.md`
+- **sLLM 가이드**: `docs/guides/sllm_detector.md`
+- **성희롱 감지**: `docs/guides/sexual_harassment_detection.md` ⭐ NEW
+- **Fine-tuning 가이드**: `docs/guides/fine_tuning_explained.md` ⭐ NEW
+- **Fine-tuning 비교**: `docs/guides/finetuning_comparison_test.md` ⭐ NEW
 - **성능 최적화**: `docs/guides/performance_optimization.md`
 - **정확도 개선**: `docs/guides/accuracy_improvement.md`
 

@@ -78,9 +78,12 @@ Write-Host ""
 Write-Host "실행 모드를 선택하세요:" -ForegroundColor White
 Write-Host "  1. 배치 처리 (모든 샘플 파일 자동 처리) ⭐ 권장" -ForegroundColor Cyan
 Write-Host "  2. 개별 파일 선택" -ForegroundColor White
+Write-Host "  3. 다중 카테고리 테스트 (욕설 + 성희롱)" -ForegroundColor Yellow
+Write-Host "  4. Fine-tuning 전후 비교 테스트" -ForegroundColor Magenta
+Write-Host "  5. 종료" -ForegroundColor Gray
 Write-Host ""
 
-$mode = Read-Host "선택 (1-2)"
+$mode = Read-Host "선택 (1-5)"
 
 if ($mode -eq "1") {
     # 배치 처리 모드
@@ -105,21 +108,23 @@ if ($mode -eq "1") {
     # 개별 파일 선택 모드
     Write-Host ""
     Write-Host "예제 파일 목록:" -ForegroundColor White
-    Write-Host "  1. normal_call.txt    - 정상 통화 (욕설 없음)" -ForegroundColor Green
-    Write-Host "  2. abusive_call.txt   - 욕설 포함 통화 (욕설 다수)" -ForegroundColor Red
-    Write-Host "  3. mixed_call.txt     - 혼합 통화 (불만 표현)" -ForegroundColor Yellow
-    Write-Host "  4. complaint_call.txt - 불만 통화 (경미한 불만)" -ForegroundColor Yellow
-    Write-Host "  5. 직접 파일 경로 입력" -ForegroundColor Cyan
+    Write-Host "  1. normal_call.txt              - 정상 통화 (욕설 없음)" -ForegroundColor Green
+    Write-Host "  2. abusive_call.txt             - 욕설 포함 통화 (욕설 다수)" -ForegroundColor Red
+    Write-Host "  3. mixed_call.txt               - 혼합 통화 (불만 표현)" -ForegroundColor Yellow
+    Write-Host "  4. complaint_call.txt           - 불만 통화 (경미한 불만)" -ForegroundColor Yellow
+    Write-Host "  5. sexual_harassment_call.txt   - 성희롱 통화" -ForegroundColor Magenta
+    Write-Host "  6. 직접 파일 경로 입력" -ForegroundColor Cyan
     Write-Host ""
 
-    $choice = Read-Host "선택 (1-5)"
+    $choice = Read-Host "선택 (1-6)"
 
     switch ($choice) {
         "1" { $inputFile = "data/samples/normal_call.txt" }
         "2" { $inputFile = "data/samples/abusive_call.txt" }
         "3" { $inputFile = "data/samples/mixed_call.txt" }
         "4" { $inputFile = "data/samples/complaint_call.txt" }
-        "5" { 
+        "5" { $inputFile = "data/samples/sexual_harassment_call.txt" }
+        "6" { 
             $inputFile = Read-Host "파일 경로를 입력하세요"
             if (-Not (Test-Path $inputFile)) {
                 Write-Host "❌ 파일을 찾을 수 없습니다: $inputFile" -ForegroundColor Red
@@ -161,6 +166,50 @@ if ($mode -eq "1") {
     # 결과 파일 위치 안내
     Write-Host "📁 결과 파일은 data/results/ 디렉토리에 저장되었습니다." -ForegroundColor Yellow
     Write-Host ""
+    
+} elseif ($mode -eq "3") {
+    # 다중 카테고리 테스트 모드
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "🔍 다중 카테고리 테스트 (욕설 + 성희롱)" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    python test_multi_category.py
+    
+    $exitCode = $LASTEXITCODE
+    
+    Write-Host ""
+    if ($exitCode -eq 0) {
+        Write-Host "✅ 테스트 완료!" -ForegroundColor Green
+    } else {
+        Write-Host "❌ 테스트 중 오류 발생" -ForegroundColor Red
+    }
+    
+} elseif ($mode -eq "4") {
+    # Fine-tuning 전후 비교 테스트 모드
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "🔬 Fine-tuning 전후 비교 테스트" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    python test_finetuning_comparison.py
+    
+    $exitCode = $LASTEXITCODE
+    
+    Write-Host ""
+    if ($exitCode -eq 0) {
+        Write-Host "✅ 비교 테스트 완료!" -ForegroundColor Green
+    } else {
+        Write-Host "❌ 테스트 중 오류 발생" -ForegroundColor Red
+    }
+    
+} elseif ($mode -eq "5") {
+    # 종료
+    Write-Host ""
+    Write-Host "프로그램을 종료합니다." -ForegroundColor Cyan
+    exit 0
     
 } else {
     Write-Host "❌ 잘못된 선택입니다" -ForegroundColor Red
