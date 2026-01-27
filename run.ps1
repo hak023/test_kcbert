@@ -80,10 +80,11 @@ Write-Host "  1. 배치 처리 (모든 샘플 파일 자동 처리) ⭐ 권장" 
 Write-Host "  2. 개별 파일 선택" -ForegroundColor White
 Write-Host "  3. 다중 카테고리 테스트 (욕설 + 성희롱)" -ForegroundColor Yellow
 Write-Host "  4. Fine-tuning 전후 비교 테스트" -ForegroundColor Magenta
-Write-Host "  5. 종료" -ForegroundColor Gray
+Write-Host "  5. KcBERT vs sLLM 성능 비교 🆕" -ForegroundColor Green
+Write-Host "  6. 종료" -ForegroundColor Gray
 Write-Host ""
 
-$mode = Read-Host "선택 (1-5)"
+$mode = Read-Host "선택 (1-6)"
 
 if ($mode -eq "1") {
     # 배치 처리 모드
@@ -206,6 +207,34 @@ if ($mode -eq "1") {
     }
     
 } elseif ($mode -eq "5") {
+    # KcBERT vs sLLM 성능 비교 모드
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "🔬 KcBERT vs sLLM 성능 비교" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "⚠️  주의: sLLM 모델 사용 시 시간이 오래 걸릴 수 있습니다." -ForegroundColor Yellow
+    Write-Host "   예상 소요 시간: 약 10-20분" -ForegroundColor Yellow
+    Write-Host ""
+    
+    $confirm = Read-Host "계속 진행하시겠습니까? (Y/N)"
+    if ($confirm -eq "Y" -or $confirm -eq "y") {
+        python compare_kcbert_vs_sllm.py
+        
+        $exitCode = $LASTEXITCODE
+        
+        Write-Host ""
+        if ($exitCode -eq 0) {
+            Write-Host "✅ 성능 비교 완료!" -ForegroundColor Green
+            Write-Host "📊 상세 결과는 data/results/ 디렉토리에 저장되었습니다." -ForegroundColor Yellow
+        } else {
+            Write-Host "❌ 비교 중 오류 발생" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "취소되었습니다." -ForegroundColor Yellow
+    }
+    
+} elseif ($mode -eq "6") {
     # 종료
     Write-Host ""
     Write-Host "프로그램을 종료합니다." -ForegroundColor Cyan
