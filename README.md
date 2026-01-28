@@ -305,6 +305,8 @@ results = detector.predict_batch(texts)
 - **sLLM 프롬프트 개선**: `docs/SLLM_PROMPT_IMPROVED.md` ⭐
 - **모델 성능 비교**: `docs/guides/model_comparison.md` 🆕
 - **성능 분석 보고서**: `docs/PERFORMANCE_ANALYSIS_REPORT.md` 🆕
+- **Fine-tuned KcBERT vs sLLM 비교 리포트**: `docs/KCBERT_FINETUNED_VS_SLLM_REPORT.md` 🆕✨
+- **최종 비교 리포트**: `docs/FINAL_COMPARISON_REPORT.md` 📊
 - **성능 최적화**: `docs/guides/performance_optimization.md`
 - **정확도 개선**: `docs/guides/accuracy_improvement.md`
 
