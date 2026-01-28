@@ -36,6 +36,7 @@ env/
 
 # 모델 캐시 (용량 큰 파일)
 models/kcbert/
+models/kcbert-finetuned-*/
 models/*.gguf
 models/*.bin
 models/*.safetensors
