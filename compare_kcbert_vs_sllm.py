@@ -135,6 +135,24 @@ def main():
     sllm_detector = SLLMAbusiveDetector(verbose=False)
     print()
     
+    # 워밍업 실행 (모델 초기화 시간 제외)
+    print_header("2.5️⃣ 모델 워밍업")
+    print("⏳ 모델 워밍업 중... (첫 케이스 처리 시간 보정을 위함)")
+    print()
+    
+    warmup_text = "안녕하세요. 테스트입니다."
+    
+    print("  🔵 KcBERT 워밍업...", end=" ", flush=True)
+    _ = kcbert_detector.predict(warmup_text)
+    print("완료")
+    
+    print("  🟢 sLLM 워밍업...", end=" ", flush=True)
+    _ = sllm_detector.predict(warmup_text)
+    print("완료")
+    
+    print()
+    print("✅ 워밍업 완료! 이제 정확한 처리 시간 측정이 가능합니다.")
+    
     # 테스트 실행
     print_header("3️⃣ 테스트 실행")
     

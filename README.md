@@ -67,17 +67,21 @@ pip install -r requirements.txt
   2. 개별 파일 선택
   3. 다중 카테고리 테스트 (욕설 + 성희롱)
   4. Fine-tuning 전후 비교 테스트
-  5. KcBERT vs sLLM 성능 비교 🆕
-  6. 종료
+  5. KcBERT vs sLLM 성능 비교
+  6. 이슈 케이스 Fine-tuning 🔧
+  7. Fine-tuned 모델 평가 📊
+  8. 종료
 
-선택 (1-6): 1
+선택 (1-8): 1
 ```
 
 - **배치 처리 모드**: 모든 샘플을 한 번에 처리하고 요약 제공
 - **개별 파일 모드**: 원하는 파일 하나만 분석
 - **다중 카테고리 테스트**: 욕설과 성희롱을 동시에 감지하는 테스트
 - **Fine-tuning 비교**: 모델 학습 전후 성능 비교
-- **KcBERT vs sLLM 비교**: 20개 테스트 케이스로 두 모델 성능 비교 🆕
+- **KcBERT vs sLLM 비교**: 20개 테스트 케이스로 두 모델 성능 비교
+- **이슈 케이스 Fine-tuning**: 테스트 실패 케이스로 모델 재학습 🆕
+- **Fine-tuned 모델 평가**: 재학습 전후 성능 비교 🆕
 
 **배치 처리 결과 예시**:
 ```
@@ -297,8 +301,10 @@ results = detector.predict_batch(texts)
 - **성희롱 감지**: `docs/guides/sexual_harassment_detection.md` ⭐
 - **Fine-tuning 가이드**: `docs/guides/fine_tuning_explained.md` ⭐
 - **Fine-tuning 비교**: `docs/guides/finetuning_comparison_test.md` ⭐
+- **이슈 케이스 Fine-tuning**: `docs/guides/issue_cases_finetuning.md` 🆕
 - **sLLM 프롬프트 개선**: `docs/SLLM_PROMPT_IMPROVED.md` ⭐
 - **모델 성능 비교**: `docs/guides/model_comparison.md` 🆕
+- **성능 분석 보고서**: `docs/PERFORMANCE_ANALYSIS_REPORT.md` 🆕
 - **성능 최적화**: `docs/guides/performance_optimization.md`
 - **정확도 개선**: `docs/guides/accuracy_improvement.md`
 
